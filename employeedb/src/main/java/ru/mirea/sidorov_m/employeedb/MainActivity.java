@@ -3,11 +3,12 @@ package ru.mirea.sidorov_m.employeedb;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -26,22 +27,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         AppDatabase db = App.getInstance().getDatabase();
-        EmployeeDao employeeDao = db.employeeDao();
-        Employee employee = new Employee();
+        MarvelDao marvelDao = db.employeeDao();
 
-        employee.name = "Tony Soprano";
-        employee.salary = 15000;
+        binding.insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarvelSuperheroes marvelSuperheroe = new MarvelSuperheroes();
 
-        employeeDao.insert(employee);
+                marvelSuperheroe.name = binding.editTextTextPersonName.getText().toString();
+                marvelSuperheroe.superpower = binding.editTextTextPersonName2.getText().toString();
+                marvelSuperheroe.team = binding.editTextTextPersonName3.getText().toString();
 
-        List<Employee> employees = employeeDao.getAll();
+                marvelDao.insert(marvelSuperheroe);
+            }
+        });
 
-        employee = employeeDao.getById(1);
-
-        employee.salary = 35000;
-
-        employeeDao.update(employee);
-
-        Log.d(TAG, employee.name + " " + employee.salary);
+        binding.select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarvelSuperheroes marvelSuperheroe = marvelDao.getById(Integer.parseInt(binding.editTextTextPersonName4.getText().toString()));
+                Snackbar.make(v, String.format("имя - %s  суперсила - %s\nкоманда - %s", marvelSuperheroe.name, marvelSuperheroe.superpower, marvelSuperheroe.team), Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 }
